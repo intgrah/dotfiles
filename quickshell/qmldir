@@ -1,0 +1,2 @@
+module quickshell
+singleton Appearance 1.0 config/Appearance.qml

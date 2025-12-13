@@ -1,0 +1,24 @@
+{
+  "$schema": "https://raw.githubusercontent.com/sumneko/vscode-lua/master/setting/schema.json",
+  "runtime.version": "LuaJIT",
+  "runtime.path": [ "lua/?.lua", "lua/?/init.lua", "?.lua", "?/init.lua" ],
+  "diagnostics.globals": [ "vim" ],
+  "workspace.library": [
+    "/home/intgrah/.local/share/nvim/lazy/neodev.nvim/types/stable",
+    "/home/intgrah/.local/share/nvim/lazy/plenary.nvim/lua",
+    "/home/intgrah/.local/share/nvim/lazy/mason.nvim/lua",
+    "/home/intgrah/.local/share/nvim/lazy/mason-lspconfig.nvim/lua",
+    "/home/intgrah/.local/share/nvim/lazy/nvim-lspconfig/lua",
+    "/home/intgrah/.local/share/nvim/lazy/nvim-cmp/lua",
+    "/home/intgrah/.local/share/nvim/lazy/telescope.nvim/lua",
+    "/home/intgrah/.local/share/nvim/lazy/nvim-treesitter/lua",
+    "/home/intgrah/.local/share/nvim/lazy/lazy.nvim/lua",
+    "/home/intgrah/.local/share/nvim/lazy/catppuccin/lua",
+    "/home/intgrah/.local/share/nvim/lazy/nvim-tree.lua/lua",
+    "${3rd}/luv/library"
+  ],
+  "workspace.checkThirdParty": false,
+  "completion.keywordSnippet": "Replace",
+  "completion.callSnippet": "Replace",
+  "telemetry.enable": false
+}
