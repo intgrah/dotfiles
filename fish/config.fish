@@ -22,7 +22,7 @@ end
 
 eval (opam env)
 
-source ~/.config/fish/secrets.fish 2>/dev/null
+source ~/.config/fish/secrets.fish
 
 set -x PATH "/home/intgrah/.ghcup/bin" $PATH
 set -x PATH "/home/intgrah/.bun/bin" $PATH
