@@ -15,6 +15,12 @@ Item {
     property bool dropdownHovered: false
     property bool topbarHovered: false
     property bool controlPanelVisible: false
+    property bool controlTriggerHovered: false
+    property bool controlPanelHovered: false
+
+    function tryCloseControlPanel() {
+        if (!controlTriggerHovered && !controlPanelHovered) controlPanelVisible = false
+    }
 
     property int sysVolume: 0
     property bool sysMuted: false
@@ -22,6 +28,8 @@ Item {
     property int sysBattery: 100
     property bool sysCharging: false
     property string sysSsid: "WiFi"
+    property bool vpnConnected: false
+    property string vpnCountry: ""
     property string musicFile: ""
     property string musicPlayer: ""
     property bool musicPlaying: false
@@ -93,6 +101,24 @@ Item {
         command: ["sh", "-c", "nmcli -t -f ACTIVE,SSID dev wifi | grep '^yes' | cut -d: -f2 | head -1"]
         stdout: SplitParser { onRead: d => root.sysSsid = d.trim() || "Offline" }
     }
+
+    Process {
+        id: vpnProc
+        command: ["sh", "-c", "nmcli -t -f NAME,TYPE connection show --active | grep wireguard | cut -d: -f1"]
+        stdout: SplitParser { onRead: d => {
+            let name = d.trim()
+            root.vpnConnected = name !== ""
+            if (name.includes("UK")) root.vpnCountry = "UK"
+            else if (name.includes("CH") || name.includes("Switzerland")) root.vpnCountry = "CH"
+            else if (name.includes("AL") || name.includes("Albania")) root.vpnCountry = "AL"
+            else if (name.includes("NL") || name.includes("Netherlands")) root.vpnCountry = "NL"
+            else if (name) root.vpnCountry = name.split("#")[0].replace("ProtonVPN ", "")
+            else root.vpnCountry = ""
+        }}
+    }
+
+    Process { id: vpnConnectProc; command: [] }
+    Process { id: vpnDisconnectProc; command: ["protonvpn", "disconnect"] }
 
     Process {
         id: musicProc
@@ -175,6 +201,7 @@ Item {
             batProc.running = true
             batStatusProc.running = true
             wifiProc.running = true
+            vpnProc.running = true
         }
     }
 
@@ -408,7 +435,14 @@ Item {
                     anchors.bottom: parent.bottom
                     width: 180
                     hoverEnabled: true
-                    onEntered: root.controlPanelVisible = true
+                    onEntered: { root.controlTriggerHovered = true; root.controlPanelVisible = true }
+                    onExited: { root.controlTriggerHovered = false; controlCloseTimer.restart() }
+                }
+
+                Timer {
+                    id: controlCloseTimer
+                    interval: 50
+                    onTriggered: root.tryCloseControlPanel()
                 }
             }
         }
@@ -884,15 +918,22 @@ Item {
             anchors.right: true
             margins.top: root.barHeight
             implicitWidth: 280
-            implicitHeight: 170
+            implicitHeight: 220
             color: "#1e1e2e"
             exclusionMode: ExclusionMode.Ignore
             visible: root.controlPanelVisible
 
+            Timer {
+                id: controlPanelCloseTimer
+                interval: 50
+                onTriggered: root.tryCloseControlPanel()
+            }
+
             MouseArea {
                 anchors.fill: parent
                 hoverEnabled: true
-                onExited: root.controlPanelVisible = false
+                onEntered: root.controlPanelHovered = true
+                onExited: { root.controlPanelHovered = false; controlPanelCloseTimer.restart() }
 
                 Column {
                     anchors.fill: parent
@@ -1042,6 +1083,71 @@ Item {
                                     color: "#cdd6f4"
                                     elide: Text.ElideRight
                                     width: 60
+                                }
+                            }
+                        }
+                    }
+
+                    Row {
+                        width: parent.width
+                        height: 36
+                        spacing: 6
+
+                        Rectangle {
+                            width: 36
+                            height: parent.height
+                            radius: 4
+                            color: root.vpnConnected ? "#a6e3a1" : "#45475a"
+
+                            Text {
+                                anchors.centerIn: parent
+                                text: root.vpnConnected ? "󰌆" : "󰌊"
+                                font.family: "JetBrainsMono Nerd Font"
+                                font.pixelSize: 16
+                                color: root.vpnConnected ? "#1e1e2e" : "#6c7086"
+                            }
+
+                            HoverHandler { cursorShape: Qt.PointingHandCursor }
+                            TapHandler {
+                                onTapped: {
+                                    if (root.vpnConnected) {
+                                        vpnDisconnectProc.running = true
+                                    }
+                                }
+                            }
+                        }
+
+                        Repeater {
+                            model: [
+                                { code: "GB", label: "UK" },
+                                { code: "CH", label: "CH" },
+                                { code: "AL", label: "AL" },
+                                { code: "NL", label: "NL" }
+                            ]
+
+                            Rectangle {
+                                id: vpnBtn
+                                required property var modelData
+                                width: (parent.width - 36 - 24) / 4
+                                height: parent.height
+                                radius: 4
+                                color: (root.vpnConnected && root.vpnCountry === modelData.label) ? "#89b4fa" : (vpnBtnHover.hovered ? "#353548" : "#2a2a3c")
+
+                                Text {
+                                    anchors.centerIn: parent
+                                    text: vpnBtn.modelData.label
+                                    font.family: "Space Grotesk"
+                                    font.pixelSize: 11
+                                    font.weight: Font.Medium
+                                    color: (root.vpnConnected && root.vpnCountry === vpnBtn.modelData.label) ? "#1e1e2e" : "#cdd6f4"
+                                }
+
+                                HoverHandler { id: vpnBtnHover; cursorShape: Qt.PointingHandCursor }
+                                TapHandler {
+                                    onTapped: {
+                                        vpnConnectProc.command = ["protonvpn", "connect", "--country", vpnBtn.modelData.code]
+                                        vpnConnectProc.running = true
+                                    }
                                 }
                             }
                         }
