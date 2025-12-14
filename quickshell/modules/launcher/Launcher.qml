@@ -39,11 +39,11 @@ Item {
 
     function launch(app) {
         hide()
-        launchProc.command = ["sh", "-c", app.exec]
+        launchProc.command = ["hyprctl", "dispatch", "exec", app.exec]
         launchProc.running = true
     }
 
-    Process { id: launchProc; command: [] }
+    Process { id: launchProc }
 
     // Get current icon theme
     Process {
@@ -349,4 +349,3 @@ Item {
         }
     }
 }
-

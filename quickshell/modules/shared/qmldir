@@ -1,6 +1,0 @@
-module qs.modules.shared
-singleton GlobalState 1.0 GlobalState.qml
-Materials 1.0 Materials.qml
-ShardedCard 1.0 ShardedCard.qml
-
-

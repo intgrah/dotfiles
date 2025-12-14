@@ -1,14 +1,12 @@
 import QtQuick
 import Quickshell
 import Quickshell.Wayland
-import qs.config
 
 Variants {
     model: Quickshell.screens
 
     PanelWindow {
         required property var modelData
-
         screen: modelData
 
         WlrLayershell.layer: WlrLayer.Background
@@ -21,10 +19,9 @@ Variants {
             bottom: true
         }
 
-        color: Appearance.colors.background
+        color: "#1e1e2e"
 
         Image {
-            id: backgroundImage
             anchors.fill: parent
             source: "../../assets/bg.png"
             fillMode: Image.PreserveAspectCrop
