@@ -5,7 +5,7 @@ set CONFIG_DIR (test -n "$XDG_CONFIG_HOME"; and echo $XDG_CONFIG_HOME; or echo ~
 
 echo "Installing dotfiles from $DOTFILES_DIR"
 
-set configs fastfetch fish hypr kitty mako nvim quickshell
+set configs fastfetch fish hypr kitty mako nvim quickshell xdg-desktop-portal
 
 for config in $configs
     set source "$DOTFILES_DIR/$config"
