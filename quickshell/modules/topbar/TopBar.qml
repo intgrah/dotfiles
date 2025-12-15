@@ -1169,16 +1169,24 @@ Item {
                             Rectangle {
                                 id: actionBtn
                                 required property var modelData
+                                property bool confirming: false
                                 width: (parent.width - 24) / 4
                                 height: parent.height
-                                color: actionHover.hovered ? "#353548" : "#2a2a3c"
+                                color: confirming ? actionBtn.modelData.accent : (actionHover.hovered ? "#353548" : "#2a2a3c")
 
                                 Text {
                                     anchors.centerIn: parent
-                                    text: actionBtn.modelData.icon
-                                    font.family: "JetBrainsMono Nerd Font"
-                                    font.pixelSize: 16
-                                    color: actionHover.hovered ? actionBtn.modelData.accent : "#a6adc8"
+                                    text: actionBtn.confirming ? "?" : actionBtn.modelData.icon
+                                    font.family: actionBtn.confirming ? "Space Grotesk" : "JetBrainsMono Nerd Font"
+                                    font.pixelSize: actionBtn.confirming ? 14 : 16
+                                    font.weight: actionBtn.confirming ? Font.Bold : Font.Normal
+                                    color: actionBtn.confirming ? "#1e1e2e" : (actionHover.hovered ? actionBtn.modelData.accent : "#a6adc8")
+                                }
+
+                                Timer {
+                                    id: confirmTimer
+                                    interval: 2000
+                                    onTriggered: actionBtn.confirming = false
                                 }
 
                                 HoverHandler {
@@ -1188,9 +1196,15 @@ Item {
 
                                 TapHandler {
                                     onTapped: {
-                                        root.controlPanelVisible = false
-                                        actionProc.command = ["sh", "-c", actionBtn.modelData.cmd]
-                                        actionProc.running = true
+                                        if (actionBtn.confirming) {
+                                            root.controlPanelVisible = false
+                                            actionProc.command = ["sh", "-c", actionBtn.modelData.cmd]
+                                            actionProc.running = true
+                                            actionBtn.confirming = false
+                                        } else {
+                                            actionBtn.confirming = true
+                                            confirmTimer.restart()
+                                        }
                                     }
                                 }
 

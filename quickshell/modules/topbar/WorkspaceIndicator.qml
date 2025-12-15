@@ -107,7 +107,7 @@ Item {
 
                     Text {
                         anchors.centerIn: parent
-                        text: modelData.id.toString()
+                        text: (((modelData.id - 1) % 10) + 1).toString()
                         font {
                             family: "Space Grotesk"
                             pixelSize: 11
