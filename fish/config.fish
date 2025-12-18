@@ -27,5 +27,6 @@ source ~/.config/fish/local.fish 2>/dev/null
 
 set -x PATH "/home/intgrah/.ghcup/bin" $PATH
 set -x PATH "/home/intgrah/.bun/bin" $PATH
+set -x PATH "/home/intgrah/go/bin" $PATH
 set -x QML2_IMPORT_PATH /home/intgrah/dotfiles/quickshell $QML2_IMPORT_PATH
 set -x PATH $HOME/.cargo/bin $PATH

@@ -9,7 +9,7 @@ Item {
     readonly property int barHeight: 36
     readonly property int dropdownWidth: 480
     readonly property int dropdownHeight: 360
-    readonly property int closeDelay: 50
+    readonly property int closeDelay: 100
 
     property int activePanel: -1
     property bool dropdownHovered: false
@@ -253,9 +253,10 @@ Item {
 
                 Item {
                     id: centerArea
-                    anchors.centerIn: parent
+                    anchors.horizontalCenter: parent.horizontalCenter
+                    anchors.top: parent.top
+                    anchors.bottom: parent.bottom
                     width: root.dropdownWidth
-                    height: parent.height
 
                     property string dateStr: ""
                     property string timeStr: ""
@@ -458,7 +459,7 @@ Item {
             anchors.top: true
             anchors.left: true
             anchors.right: true
-            margins.top: root.barHeight
+            margins.top: root.barHeight - 4
             margins.left: (modelData.width - root.dropdownWidth) / 2
             margins.right: (modelData.width - root.dropdownWidth) / 2
             implicitHeight: root.dropdownHeight

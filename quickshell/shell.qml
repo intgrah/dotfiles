@@ -3,6 +3,7 @@ import "modules/topbar"
 import "modules/background"
 import "modules/launcher"
 import "modules/clipboard"
+import "modules/monitors"
 
 ShellRoot {
     id: root
@@ -11,4 +12,5 @@ ShellRoot {
     TopBar {}
     Launcher {}
     Clipboard {}
+    MonitorManager {}
 }
